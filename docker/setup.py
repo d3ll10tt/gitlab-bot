@@ -9,6 +9,6 @@ setup(name='gitlab-bot',
       packages=['gitlab-bot'],
       install_requires=[
           'python-gitlab',
-          'yaml',
+          'pyyaml',
       ],
       zip_safe=False)
