@@ -8,7 +8,7 @@ setup(name='gitlab-bot',
       license='MIT',
       packages=['gitlab-bot'],
       install_requires=[
-          'python-gitlab',
+          'python-gitlab==1.4.0',
           'pyyaml',
       ],
       zip_safe=False)
