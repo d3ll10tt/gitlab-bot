@@ -67,11 +67,14 @@ def handle_command(command, channel):
         response = "Here is a list of current open merge requests:\n\n"
         for mr in merge_requests:
             response = response + mr.web_url + "\n" \
-                       + "target: " + mr.target_branch \
-                       + "\ntitle: \"" + mr.title + "\"" \
-                       + "\nAuthor: " + mr.author.name \
-                       + "\nAssigned for review/approval to: " + mr.assignee.name \
-                       + "\n\n"
+                        + "Target: " + mr.target_branch \
+                        + "\nTitle: \"" + mr.title + "\"" \
+                        + "\nAuthor: " + mr.author.name
+            if mr.assignee != None:
+             response = response + "\nAssigned for review/approval to: " + mr.assignee.name
+            else:
+             response = response + "\nAssigned for review/approval to: No Assignee!"
+            response = response + "\n\n"
 
     elif command.lower().startswith(CMD_MR_LIST_UNASSIGNED):
 
@@ -80,8 +83,8 @@ def handle_command(command, channel):
         for mr in merge_requests:
             if mr.assignee == None:
                 response = response + mr.web_url + "\n" \
-                           + "target: " + mr.target_branch \
-                           + "\ntitle: \"" + mr.title + "\"" \
+                           + "Target: " + mr.target_branch \
+                           + "\nTitle: \"" + mr.title + "\"" \
                            + "\nAuthor: " + mr.author.name \
                            + "\n\n"
 
