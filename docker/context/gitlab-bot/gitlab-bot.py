@@ -2,15 +2,18 @@ import os
 import time
 import re
 from slackclient import SlackClient
+from apscheduler.schedulers.background import BackgroundScheduler
 import gitlab
 import urllib3
 urllib3.disable_warnings()
 
-config_file = 'config/gitlab-bot.ini'
-project_id = os.environ.get('PROJECT-ID')
+project_id = os.environ.get('PROJECT_ID')
+bot_token = os.environ.get('BOT_TOKEN')
+gitlab_server = os.environ.get('GIT_SERVER')
+git_token = os.environ.get('GIT_TOKEN')
 
 # instantiate Slack client
-slack_client = SlackClient(os.environ.get('BOT-TOKEN'))
+slack_client = SlackClient(bot_token)
 # TNDbot's user and user ID in Slack: id value is assigned after the bot starts up
 TNDbot_id = None
 TNDbot_user = 'tnd-merge-bot'
@@ -23,11 +26,14 @@ MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 
 # instantiate gitlab connection
 try:
-    gl = gitlab.Gitlab.from_config('my-server', [config_file])
+    gl = gitlab.Gitlab(gitlab_server, private_token=git_token, ssl_verify=False, timeout=10, api_version='3')
     # Get target project
     project = gl.projects.get(project_id)
 except:
     print("Could not connect to gitlab-server")
+
+
+
 
 def parse_bot_commands(slack_events):
     """
@@ -100,7 +106,24 @@ def handle_command(command, channel):
         text=response or default_response
     )
 
+def test_msg():
+
+    print("In test_msg")
+
+    slack_client.api_call(
+        "chat.postMessage",
+        channel='jenkins-test',
+        as_user=TNDbot_user,
+        text="APSScheduler cron message every minute"
+    )
+
 if __name__ == "__main__":
+
+    # Initialise scheduler
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(test_msg, 'cron', minute='*')
+    scheduler.start()
+
     if slack_client.rtm_connect(with_team_state=False):
         print("Starter Bot connected and running!")
         # Read bot's user ID by calling Web API method `auth.test`
