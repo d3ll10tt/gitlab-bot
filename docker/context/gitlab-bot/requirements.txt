@@ -1,4 +1,4 @@
 python_gitlab==1.4.0
-urllib3==1.24
+urllib3==1.26.5
 slackclient==1.3.0
 setuptools==40.5.0
